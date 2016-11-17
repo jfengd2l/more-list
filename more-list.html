@@ -1,0 +1,98 @@
+<link rel="import" href="../polymer/polymer.html">
+<!-- <link rel="import" href="../iron-icons/iron-icons.html"> -->
+
+<!--
+`more-list`
+Expandable list component
+
+@demo demo/index.html
+-->
+
+<dom-module id="more-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      :host ::content > li {
+        display: none;
+      }
+      :host[expanded] ::content > li {
+        display: block;
+      }
+      :host ::content > li[displayed] {
+        display: block;
+      }
+      :host > #more-items {
+        color: #006fbf;
+        cursor: pointer;
+      }
+      :host[expanded] > #more-items {
+        display: none;
+      }
+    </style>
+    <content></content>
+    <span id="more-items">[[formattedMoreItemsLabel]]</span>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'more-list',
+
+      properties: {
+        totalItems: Number,
+        displayedItems: {
+          type: Number,
+          value: 3,
+        },
+        moreItems: {
+          type: Number,
+          computed: '_getItemsRemaining(totalItems, displayedItems)'
+        },
+        moreItemsLabel: {
+          type: String,
+          value: '+ $1 more'
+        },
+        formattedMoreItemsLabel: {
+          type: String,
+          computed: '_formatMoreItemsLabel(moreItemsLabel, moreItems)'
+        },
+        expanded: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        }
+      },
+
+      listeners: {
+        'more-items.tap': 'expand'
+      },
+
+      expand: function() {
+        this.expanded = true;
+      },
+
+      _getItemsRemaining: function(totalItems, displayedItems) {
+        return totalItems - displayedItems;
+      },
+
+      _formatMoreItemsLabel: function(moreItemsLabel, moreItems) {
+        return moreItemsLabel.replace('$1', moreItems);
+      },
+
+      ready: function() {
+        const listItems = this.queryAllEffectiveChildren('li');
+        this.totalItems = listItems.length;
+        if (this.totalItems <= this.displayedItems) {
+          this.expand();
+        } else {
+          for (var i = 0; i < this.displayedItems; i++) {
+            listItems[i].setAttribute('displayed', true);
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>
