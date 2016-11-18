@@ -44,7 +44,7 @@ Expandable list component
         totalItems: Number,
         displayedItems: {
           type: Number,
-          value: 3,
+          value: 3
         },
         moreItems: {
           type: Number,
@@ -83,7 +83,7 @@ Expandable list component
       },
 
       ready: function() {
-        const listItems = this.queryAllEffectiveChildren('li');
+        var listItems = this.queryAllEffectiveChildren('li');
         this.totalItems = listItems.length;
         if (this.totalItems <= this.displayedItems) {
           this.expand();
