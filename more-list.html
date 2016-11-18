@@ -17,7 +17,7 @@ Expandable list component
       :host ::content > li {
         display: none;
       }
-      :host[expanded] ::content > li {
+      :host[_expanded] ::content > li {
         display: block;
       }
       :host ::content > li[displayed] {
@@ -28,12 +28,12 @@ Expandable list component
         color: #006fbf;
         cursor: pointer;
       }
-      :host[expanded] > #more-items {
+      :host[_expanded] > #more-items {
         display: none;
       }
     </style>
     <content></content>
-    <span id="more-items">[[formattedMoreItemsLabel]]</span>
+    <span id="more-items">[[_formattedMoreItemsLabel]]</span>
   </template>
 
   <script>
@@ -42,24 +42,24 @@ Expandable list component
       is: 'more-list',
 
       properties: {
-        totalItems: Number,
+        _totalItems: Number,
         displayedItems: {
           type: Number,
           value: 3
         },
-        moreItems: {
+        _moreItems: {
           type: Number,
-          computed: '_getItemsRemaining(totalItems, displayedItems)'
+          computed: '_getItemsRemaining(_totalItems, displayedItems)'
         },
         moreItemsLabel: {
           type: String,
           value: '+ $1 more'
         },
-        formattedMoreItemsLabel: {
+        _formattedMoreItemsLabel: {
           type: String,
-          computed: '_formatMoreItemsLabel(moreItemsLabel, moreItems)'
+          computed: '_formatMoreItemsLabel(moreItemsLabel, _moreItems)'
         },
-        expanded: {
+        _expanded: {
           type: Boolean,
           value: false,
           notify: true,
@@ -72,11 +72,11 @@ Expandable list component
       },
 
       expand: function() {
-        this.expanded = true;
+        this._expanded = true;
       },
 
-      _getItemsRemaining: function(totalItems, displayedItems) {
-        return totalItems - displayedItems;
+      _getItemsRemaining: function(_totalItems, displayedItems) {
+        return _totalItems - displayedItems;
       },
 
       _formatMoreItemsLabel: function(moreItemsLabel, moreItems) {
@@ -85,8 +85,8 @@ Expandable list component
 
       ready: function() {
         var listItems = this.queryAllEffectiveChildren('li');
-        this.totalItems = listItems.length;
-        if (this.totalItems <= this.displayedItems) {
+        this._totalItems = listItems.length;
+        if (this._totalItems <= this.displayedItems) {
           this.expand();
         } else {
           for (var i = 0; i < this.displayedItems; i++) {
