@@ -93,11 +93,7 @@
 
         function assertFirstNItemsDisplayed(items, n) {
           for (var i = 0; i < items.length; i++) {
-            if (i < n) {
-              assert.equal(getComputedStyle(items[i]).display, 'block');
-            } else {
-              assert.equal(getComputedStyle(items[i]).display, 'none');
-            }
+            assert.equal(getComputedStyle(items[i]).display, i < n ? 'block' : 'none');
           }
         }
 
@@ -172,7 +168,7 @@
           var moreItemsLabel = customElement.querySelector('#more-items');
           assert.equal(moreItemsLabel.textContent, 'show 7 more items');
         });
-        
+
       });
     </script>
   </body>
