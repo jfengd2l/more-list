@@ -18,12 +18,157 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="ten-item-list">
+      <template>
+        <more-list>
+          <li>item1</li>
+          <li>item2</li>
+          <li>item3</li>
+          <li>item4</li>
+          <li>item5</li>
+          <li>item6</li>
+          <li>item7</li>
+          <li>item8</li>
+          <li>item9</li>
+          <li>item10</li>
+        </more-list>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="custom-displayed-items-5">
+      <template>
+        <more-list displayed-items="5">
+          <li>item1</li>
+          <li>item2</li>
+          <li>item3</li>
+          <li>item4</li>
+          <li>item5</li>
+          <li>item6</li>
+          <li>item7</li>
+          <li>item8</li>
+          <li>item9</li>
+          <li>item10</li>
+        </more-list>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="custom-displayed-items-11">
+      <template>
+        <more-list displayed-items="11">
+          <li>item1</li>
+          <li>item2</li>
+          <li>item3</li>
+          <li>item4</li>
+          <li>item5</li>
+          <li>item6</li>
+          <li>item7</li>
+          <li>item8</li>
+          <li>item9</li>
+          <li>item10</li>
+        </more-list>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="custom-more-items-label">
+      <template>
+        <more-list more-items-label="show $1 more items">
+          <li>item1</li>
+          <li>item2</li>
+          <li>item3</li>
+          <li>item4</li>
+          <li>item5</li>
+          <li>item6</li>
+          <li>item7</li>
+          <li>item8</li>
+          <li>item9</li>
+          <li>item10</li>
+        </more-list>
+      </template>
+    </test-fixture>
+
     <script>
       suite('more-list', function() {
-        test('instantiating the element works', function() {
-          var element = fixture('basic');
-          assert.equal(element.is, 'more-list');
+        var basic;
+        var element;
+
+        function assertFirstNItemsDisplayed(items, n) {
+          for (var i = 0; i < items.length; i++) {
+            assert.equal(getComputedStyle(items[i]).display, i < n ? 'block' : 'none');
+          }
+        }
+
+        setup(function() {
+          basic = fixture('basic');
+          element = fixture('ten-item-list');
         });
+
+        test('instantiating the element works', function() {
+          assert.equal(basic.is, 'more-list');
+        });
+
+        test('empty list hides the more-items label', function() {
+          var moreItemsLabel = basic.querySelector('#more-items');
+          assert.equal(getComputedStyle(moreItemsLabel).display, 'none');
+        });
+
+        test('ten items list only displays first 3 items', function() {
+          // 3 is default number of displayed items
+          var listItems = element.queryAllEffectiveChildren('li');
+          assert.equal(listItems.length, 10);
+          assertFirstNItemsDisplayed(listItems, 3);
+        });
+
+        test('ten items list show the more-items label', function() {
+          var moreItemsLabel = element.querySelector('#more-items');
+          assert.equal(getComputedStyle(moreItemsLabel).display, 'block');
+        });
+
+        test('ten items list show all items after expanded', function() {
+          var moreItemsLabel = element.querySelector('#more-items');
+          moreItemsLabel.click();
+          var listItems = element.queryAllEffectiveChildren('li');
+          assert.equal(listItems.length, 10);
+          assertFirstNItemsDisplayed(listItems, 10);
+        });
+
+        test('ten items list hide the more-items label after expanded', function() {
+          var moreItemsLabel = element.querySelector('#more-items');
+          moreItemsLabel.click();
+          assert.equal(getComputedStyle(moreItemsLabel).display, 'none');
+        });
+
+        test('custom displayed items less than total number of items provided: correct number of items displayed', function() {
+          var customElement = fixture('custom-displayed-items-5');
+          var listItems = customElement.queryAllEffectiveChildren('li');
+          assert.equal(listItems.length, 10);
+          assertFirstNItemsDisplayed(listItems, 5);
+        });
+
+        test('custom displayed items less than total number of items provided: more-items label displayed', function() {
+          var customElement = fixture('custom-displayed-items-5');
+          var moreItemsLabel = customElement.querySelector('#more-items');
+          assert.equal(getComputedStyle(moreItemsLabel).display, 'block');
+        });
+
+        test('custom displayed items more than total number of items provided: correct number of items displayed', function() {
+          var customElement = fixture('custom-displayed-items-11');
+          var listItems = customElement.queryAllEffectiveChildren('li');
+          assert.equal(listItems.length, 10);
+          assertFirstNItemsDisplayed(listItems, 10);
+        });
+
+        test('custom displayed items more than total number of items provided: more-items label hidden', function() {
+          var customElement = fixture('custom-displayed-items-11');
+          var moreItemsLabel = customElement.querySelector('#more-items');
+          assert.equal(getComputedStyle(moreItemsLabel).display, 'none');
+        });
+
+        test('custom more items label displayed correctly', function() {
+          var customElement = fixture('custom-more-items-label');
+          var moreItemsLabel = customElement.querySelector('#more-items');
+          assert.equal(moreItemsLabel.textContent, 'show 7 more items');
+        });
+
       });
     </script>
   </body>
